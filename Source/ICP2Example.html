@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.1.1/angular.min.js"></script>
+
+
+    <style>
+        .weatherModule {
+            background: #f2f2f2;
+            height: 150px;
+            width: 250px;
+            border: 1px dashed #ccc;
+            padding: 1em;
+        }
+    </style>
+
+    <script>
+        angular.module('todayWeather', [])
+            .controller('todayWeatherCtrl', function($scope, $http) {
+                // Method to get the weather details //
+                $scope.getTodayWeather = function() {
+                    var state = $scope.state;
+                    var city = $scope.city;
+                    $http.get('https://api.wunderground.com/api/36b799dc821d5836/conditions/q/'+state+'/'+city+'.json').success(function(data) {
+                    console.log(data);
+                    temp = data.current_observation.temp_f;
+                    icon = data.current_observation.icon_url;
+                    weather = data.current_observation.weather;
+                    humidity = data.current_observation.relative_humidity;
+                    console.log(temp);
+                    $scope.currentweather = {
+                        html: "Currently " + temp + " &deg; F and " + weather + ". Humidity is " + humidity
+                    }
+                    $scope.currentIcon = {
+                        html: "<img src='" + icon + "'/>"
+                    }
+
+                    })
+                }
+        });
+    </script>
+</head>
+<body>
+
+<div align="center">
+  <div ng-app="todayWeather" ng-controller="todayWeatherCtrl">
+      <h1>Today's Weather</h1>
+      State : <input type="text" id="myState" ng-model="state" placeholder="Enter State">
+      <br/>
+      <br/>
+      City : <input type="text" id="myCity" ng-model="city" placeholder="Enter City">
+      <br/>
+      <br/>
+
+      <button id="myButton" ng-click="getTodayWeather()">Show Weather</button>
+
+      <br/>
+      <br/>
+      <div class="weatherModule">
+          <p class="currentConditions" ng-bind-html-unsafe="currentweather.html"></p>
+          <div class="currentIcon" ng-bind-html-unsafe="currentIcon.html"></div>
+      </div>
+
+  </div>
+
+</div>
+</body>
+</html>
